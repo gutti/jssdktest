@@ -1,0 +1,34 @@
+<fb:login-button scope="user_photos,friends_photos,user_photo_video_tags,friends_photo_video_tags"
+                 onlogin="getPhotos()">
+  Grant Permissions to Allow access to Photos and Albums
+</fb:login-button>
+<ul id="photos"></ul>
+
+<script>
+window.getPhotos = function() {
+  var id = '';
+  FB.api('/me?fields=id', function(resp){
+    id = resp.id;
+  });
+  FB.api('/me/photos', function(resp) {
+    // Log.info('Photos', resp);
+    var ul = document.getElementById('photos');
+    for (var i=0, l=resp.data.length; i<l; i++) {
+      var
+        photo = resp.data[i],
+        li = document.createElement('li'),
+        a = document.createElement('a');
+      for (var j = 0, n = photo.tags.data.length; j < n; j++) {
+        var tag = photo.tags.data[j];
+        if (tag.id == id) {
+          a.innerHTML = photo.name + '(x: ' + tag.x + 'y: ' + tag.y + ')';
+          // a.href = photo.link;
+          a.href = photo.source;
+        }
+      }
+      li.appendChild(a);
+      ul.appendChild(li);
+    }
+  });
+};
+</script>
